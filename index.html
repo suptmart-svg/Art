@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>در حال اتصال...</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      background: radial-gradient(ellipse at center, #0f2027, #203a43, #2c5364);
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      position: relative;
+    }
+
+    h1 {
+      font-family: 'Segoe UI', sans-serif;
+      font-weight: 300;
+      font-size: clamp(80px, 14vw, 140px);
+      letter-spacing: 10px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-top: 80px;
+      margin-bottom: 20px;
+      background: linear-gradient(270deg, #00ffff, #ffffff, #0077ff, #00ccff, #999999);
+      background-size: 600% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: artWave 3s ease-in-out infinite;
+      will-change: background-position;
+    }
+
+    @keyframes artWave {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .welcome {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(28px, 6vw, 48px);
+      font-weight: 700;
+      letter-spacing: 4px;
+      opacity: 0;
+      transition: opacity 2s ease;
+      background: linear-gradient(90deg, #9900cc, #ff3300, #ff9900, #ffcc00);
+      background-size: 300% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: wave 4s ease-in-out infinite;
+    }
+
+    .welcome.show {
+      opacity: 1;
+    }
+
+    .status {
+      position: fixed;
+      bottom: 48px;
+      font-size: clamp(14px, 2vw, 18px);
+      opacity: 0.7;
+      letter-spacing: 1px;
+      text-align: center;
+      z-index: 9;
+      width: 100%;
+      text-align: center;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    .ticker {
+      position: fixed;
+      width: 100%;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+      z-index: 10;
+      direction: rtl;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .ticker-top {
+      top: 0;
+    }
+
+    .ticker-bottom {
+      bottom: 0;
+    }
+
+    .ticker-text {
+      display: inline-block;
+      white-space: nowrap;
+      font-size: clamp(14px, 2vw, 18px);
+      line-height: 44px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      padding-right: 100%;
+      animation: scroll 14s linear infinite, wave 5s ease-in-out infinite;
+      background: linear-gradient(270deg, #ffffff, #00ffff, #ffffff);
+      background-size: 400% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      will-change: transform;
+    }
+
+    @keyframes scroll {
+      0% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    @keyframes wave {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 100% 50%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="snow"></canvas>
+
+  <!-- نوار خبری فارسی بالا -->
+  <div class="ticker ticker-top">
+    <div class="ticker-text">
+      🎂 تولد مالک تیم آرت مبارک باد — 🎉 سال جدید میلادی (۲۰۲۶) مبارک باد — 🎂 تولد مالک تیم آرت مبارک باد — 🎉 سال جدید میلادی (۲۰۲۶) مبارک باد —
+    </div>
+  </div>
+
+  <!-- لوگوی مرکزی ART -->
+  <h1>ART</h1>
+
+  <!-- پیام WELCOME در وسط صفحه -->
+  <div class="welcome" id="welcome">WELCOME</div>
+
+  <!-- پیام وضعیت پایین صفحه -->
+  <div class="status">Connecting to server...</div>
+
+  <!-- نوار خبری انگلیسی پایین -->
+  <div class="ticker ticker-bottom">
+    <div class="ticker-text">
+      🎂 Happy Birthday Owner Team ART — 🎉 Happy New Year (2026) — 🎂 Happy Birthday Owner Team ART — 🎉 Happy New Year (2026) —
+    </div>
+  </div>
+
+  <script>
+    // Snow effect (سبک و روان)
+    const canvas = document.getElementById('snow');
+    const ctx = canvas.getContext('2d');
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    const snowflakes = Array.from({ length: 100 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      r: Math.random() * 2 + 1,
+      dy: Math.random() * 1 + 0.5
+    }));
+
+    function drawSnow() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = 'white';
+      snowflakes.forEach(flake => {
+        ctx.beginPath();
+        ctx.arc(flake.x, flake.y, flake.r, 0, Math.PI * 2);
+        ctx.fill();
+        flake.y += flake.dy;
+        if (flake.y > height) {
+          flake.y = 0;
+          flake.x = Math.random() * width;
+        }
+      });
+      requestAnimationFrame(drawSnow);
+    }
+
+    drawSnow();
+
+    window.addEventListener('resize', () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    });
+
+    // Show WELCOME after 5 seconds
+    setTimeout(() => {
+      document.getElementById('welcome').classList.add('show');
+    }, 5000);
+
+    // Redirect after 8 seconds
+    setTimeout(() => {
+      window.location.href = "main.html"; // Replace with your actual destination
+    }, 8000);
+  </script>
+</body>
+</html>
